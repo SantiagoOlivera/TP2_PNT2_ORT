@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Ejemplo 1</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.10/vue.min.js"></script>
+</head>
+
+
+<div class="container-fluid mt-3" id="app">
+
+    <div class="form-check">
+        <input class="form-check-input" type="radio" value="BC" name="flexRadioDefault" id="flexRadioDefault1" v-model="tipoBuscador">
+        <label class="form-check-label" for="flexRadioDefault1">Busqueda completa</label>
+    </div>
+    
+    <div class="form-check">
+        <input class="form-check-input" type="radio" value="BE" name="flexRadioDefault" id="flexRadioDefault2" checked v-model="tipoBuscador">
+        <label class="form-check-label" for="flexRadioDefault2">Busqueda especifica</label>
+    </div>
+
+    <br/>
+
+    <div>
+        <div v-show="tipoBuscador==='BC'">
+            <input type="text" class="form-control" v-model="criterioDeBusqueda" placeholder="Ingresar un criterio de busqueda...">
+        </div>
+        <div v-show="tipoBuscador==='BE'">
+
+            <div class="alert alert-warning" v-show="mostrarAlert()" role="alert">
+                (*) Debe ingresar almenos 3 caracteres en alguno de los filtros disponibles
+            </div>
+
+            <input type="text" class="form-control"  placeholder="Nombre" v-model="bNombre">
+            <br/>
+            <input type="text" class="form-control"  placeholder="Apellido" v-model="bApellido">
+            <br/>
+            <input type="text" class="form-control"  placeholder="Correo" v-model="bCorreo">
+            <br/>
+            <input type="text" class="form-control"  placeholder="DNI" v-model="bDNI">
+
+        </div>
+    </div>
+
+    <br/>
+
+    <br>
+    <div class="card-deck m-0">
+        <div class="row">
+            <div class="col" v-for="persona in personasFiltradas">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">{{getNombreCompleto(persona)}}</h5>
+                        <p class="card-text">dni {{persona.dni}}</p>
+                        <a href="#" class="card-link">{{persona.correo}}</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+</html>
+
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            tipoBuscador: 'BC',
+            criterioDeBusqueda: '',
+            cMIN_NUMERO_DE_CARACTERES: 3,
+            bDNI: '',
+            bNombre: '',
+            bApellido: '',
+            bCorreo: '',
+            //Aquí, en este array es donde tienen que agregar su información
+            personas: [
+                {
+                    nombre: "Daniel",
+                    apellido: "Sanchez",
+                    correo: "danielsanchez68@hotmail.com",
+                    dni: "20442873"
+                },
+                {
+                    nombre: "...",
+                    apellido: "...",
+                    correo: "...",
+                    dni: "..."
+                },
+                {
+                    "nombre": "Mark",
+                    "apellido": "McFetridge",
+                    "correo": "mmcfetridge0@ow.ly",
+                    "dni": 11986423
+                }, {
+                "nombre": "Kalvin",
+                "apellido": "Dunbobin",
+                "correo": "kdunbobin1@tuttocitta.it",
+                "dni": 71763773
+                }, {
+                "nombre": "Taber",
+                "apellido": "Tefft",
+                "correo": "ttefft2@harvard.edu",
+                "dni": 34313532
+                }, {
+                "nombre": "Job",
+                "apellido": "Haigh",
+                "correo": "jhaigh3@google.cn",
+                "dni": 91738096
+                }, {
+                "nombre": "Nancie",
+                "apellido": "Scamel",
+                "correo": "nscamel4@bloglines.com",
+                "dni": 46455539
+                }, {
+                "nombre": "Valery",
+                "apellido": "Rodman",
+                "correo": "vrodman5@msu.edu",
+                "dni": 99362734
+                }, {
+                "nombre": "Tonia",
+                "apellido": "Urch",
+                "correo": "turch6@ovh.net",
+                "dni": 32299040
+                }, {
+                "nombre": "Avigdor",
+                "apellido": "Grinham",
+                "correo": "agrinham7@ning.com",
+                "dni": 81125768
+                }, {
+                "nombre": "Terese",
+                "apellido": "Duddle",
+                "correo": "tduddle8@zdnet.com",
+                "dni": 23603733
+                }, {
+                "nombre": "Georgeanna",
+                "apellido": "McGrill",
+                "correo": "gmcgrill9@nsw.gov.au",
+                "dni": 75458578
+                }, {
+                "nombre": "Alain",
+                "apellido": "Jonsson",
+                "correo": "ajonssona@dagondesign.com",
+                "dni": 16275228
+                }, {
+                "nombre": "Latia",
+                "apellido": "Boal",
+                "correo": "lboalb@bloglovin.com",
+                "dni": 31315487
+                }, {
+                "nombre": "Jorie",
+                "apellido": "Pringuer",
+                "correo": "jpringuerc@foxnews.com",
+                "dni": 59129812
+                }, {
+                "nombre": "Mill",
+                "apellido": "Worthing",
+                "correo": "mworthingd@cnn.com",
+                "dni": 22107215
+                }, {
+                "nombre": "Maiga",
+                "apellido": "Vivers",
+                "correo": "mviverse@stanford.edu",
+                "dni": 42068907
+                }, {
+                "nombre": "Oby",
+                "apellido": "Lamberton",
+                "correo": "olambertonf@house.gov",
+                "dni": 37306828
+                }, {
+                "nombre": "Reina",
+                "apellido": "Keynes",
+                "correo": "rkeynesg@tamu.edu",
+                "dni": 40218500
+                }, {
+                "nombre": "Cristen",
+                "apellido": "Emblow",
+                "correo": "cemblowh@jiathis.com",
+                "dni": 97910825
+                }, {
+                "nombre": "Agna",
+                "apellido": "Houson",
+                "correo": "ahousoni@ox.ac.uk",
+                "dni": 64216434
+                }, {
+                "nombre": "Amelia",
+                "apellido": "Penylton",
+                "correo": "apenyltonj@t-online.de",
+                "dni": 16126700
+                }, {
+                "nombre": "Karel",
+                "apellido": "Banford",
+                "correo": "kbanfordk@free.fr",
+                "dni": 79781835
+                }, {
+                "nombre": "Patton",
+                "apellido": "Saipy",
+                "correo": "psaipyl@addtoany.com",
+                "dni": 95673657
+                }, {
+                "nombre": "Sawyer",
+                "apellido": "Vedstra",
+                "correo": "svedstram@weebly.com",
+                "dni": 99818718
+                }, {
+                "nombre": "Julienne",
+                "apellido": "Maric",
+                "correo": "jmaricn@rakuten.co.jp",
+                "dni": 95845388
+                }, {
+                "nombre": "Radcliffe",
+                "apellido": "Overy",
+                "correo": "roveryo@sohu.com",
+                "dni": 23989986
+                }, {
+                "nombre": "Tibold",
+                "apellido": "Bastard",
+                "correo": "tbastardp@4shared.com",
+                "dni": 25332747
+                }, {
+                "nombre": "Livy",
+                "apellido": "Dibbert",
+                "correo": "ldibbertq@lulu.com",
+                "dni": 43686819
+                }, {
+                "nombre": "Carmella",
+                "apellido": "Giovannoni",
+                "correo": "cgiovannonir@vimeo.com",
+                "dni": 47381412
+                }, {
+                "nombre": "Klement",
+                "apellido": "Orsi",
+                "correo": "korsis@arizona.edu",
+                "dni": 64722880
+                }, {
+                "nombre": "Theresita",
+                "apellido": "Ivanenkov",
+                "correo": "tivanenkovt@g.co",
+                "dni": 30935813
+                }, {
+                "nombre": "Kacy",
+                "apellido": "Dunabie",
+                "correo": "kdunabieu@bbc.co.uk",
+                "dni": 16106154
+                }, {
+                "nombre": "Stanton",
+                "apellido": "Philson",
+                "correo": "sphilsonv@wunderground.com",
+                "dni": 47220160
+                }, {
+                "nombre": "Paloma",
+                "apellido": "Coker",
+                "correo": "pcokerw@indiatimes.com",
+                "dni": 14271180
+                }, {
+                "nombre": "Estrella",
+                "apellido": "Meneur",
+                "correo": "emeneurx@nature.com",
+                "dni": 47457998
+                }, {
+                "nombre": "Hildagard",
+                "apellido": "Pincked",
+                "correo": "hpinckedy@tinypic.com",
+                "dni": 16683567
+                }, {
+                "nombre": "Myrvyn",
+                "apellido": "Odom",
+                "correo": "modomz@cdc.gov",
+                "dni": 40179741
+                }, {
+                "nombre": "Beryl",
+                "apellido": "Leger",
+                "correo": "bleger10@senate.gov",
+                "dni": 57679330
+                }, {
+                "nombre": "Ade",
+                "apellido": "Sterling",
+                "correo": "asterling11@redcross.org",
+                "dni": 16883197
+                }, {
+                "nombre": "Tanitansy",
+                "apellido": "Gostyke",
+                "correo": "tgostyke12@chron.com",
+                "dni": 69763049
+                }, {
+                "nombre": "Rand",
+                "apellido": "Gilding",
+                "correo": "rgilding13@jugem.jp",
+                "dni": 37275489
+                }, {
+                "nombre": "Reta",
+                "apellido": "Frapwell",
+                "correo": "rfrapwell14@etsy.com",
+                "dni": 52465969
+                }, {
+                "nombre": "Tate",
+                "apellido": "Ogborne",
+                "correo": "togborne15@google.co.jp",
+                "dni": 35138869
+                }, {
+                "nombre": "Gery",
+                "apellido": "Chrystal",
+                "correo": "gchrystal16@geocities.jp",
+                "dni": 35761437
+                }, {
+                "nombre": "Becka",
+                "apellido": "Burchmore",
+                "correo": "bburchmore17@seesaa.net",
+                "dni": 31378323
+                }, {
+                "nombre": "Lisle",
+                "apellido": "Satterlee",
+                "correo": "lsatterlee18@wikimedia.org",
+                "dni": 12621463
+                }, {
+                "nombre": "Augusto",
+                "apellido": "Vicker",
+                "correo": "avicker19@archive.org",
+                "dni": 75576597
+                }, {
+                "nombre": "Tripp",
+                "apellido": "Cremer",
+                "correo": "tcremer1a@mozilla.com",
+                "dni": 53370308
+                }, {
+                "nombre": "Olympie",
+                "apellido": "Sigars",
+                "correo": "osigars1b@loc.gov",
+                "dni": 17540103
+                }, {
+                "nombre": "Bourke",
+                "apellido": "O'Hagan",
+                "correo": "bohagan1c@nih.gov",
+                "dni": 53316654
+                }, {
+                "nombre": "Marnia",
+                "apellido": "Scolding",
+                "correo": "mscolding1d@live.com",
+                "dni": 90978706
+                }, {
+                "nombre": "Robbert",
+                "apellido": "Spehr",
+                "correo": "rspehr1e@vk.com",
+                "dni": 61865280
+                }, {
+                "nombre": "Hamilton",
+                "apellido": "McGaw",
+                "correo": "hmcgaw1f@ibm.com",
+                "dni": 97821957
+                }, {
+                "nombre": "Crichton",
+                "apellido": "Canham",
+                "correo": "ccanham1g@thetimes.co.uk",
+                "dni": 79499394
+                }, {
+                "nombre": "Augy",
+                "apellido": "Stodit",
+                "correo": "astodit1h@merriam-webster.com",
+                "dni": 84330315
+                }, {
+                "nombre": "Itch",
+                "apellido": "Colbridge",
+                "correo": "icolbridge1i@home.pl",
+                "dni": 50298092
+                }, {
+                "nombre": "Kathryne",
+                "apellido": "Agg",
+                "correo": "kagg1j@pen.io",
+                "dni": 16077746
+                }, {
+                "nombre": "Axe",
+                "apellido": "Magarrell",
+                "correo": "amagarrell1k@boston.com",
+                "dni": 35179698
+                }, {
+                "nombre": "Jayme",
+                "apellido": "Braams",
+                "correo": "jbraams1l@prlog.org",
+                "dni": 13596816
+                }, {
+                "nombre": "Greggory",
+                "apellido": "Woodcraft",
+                "correo": "gwoodcraft1m@reference.com",
+                "dni": 21785047
+                }, {
+                "nombre": "Lyell",
+                "apellido": "Butts",
+                "correo": "lbutts1n@narod.ru",
+                "dni": 30974398
+                }, {
+                "nombre": "Lory",
+                "apellido": "Conkay",
+                "correo": "lconkay1o@cocolog-nifty.com",
+                "dni": 73416138
+                }, {
+                "nombre": "Salli",
+                "apellido": "Castagnone",
+                "correo": "scastagnone1p@phoca.cz",
+                "dni": 99526678
+                }, {
+                "nombre": "Katinka",
+                "apellido": "Longlands",
+                "correo": "klonglands1q@senate.gov",
+                "dni": 90424335
+                }, {
+                "nombre": "Web",
+                "apellido": "Bales",
+                "correo": "wbales1r@elegantthemes.com",
+                "dni": 73282065
+                }, {
+                "nombre": "Torrence",
+                "apellido": "Braiden",
+                "correo": "tbraiden1s@prnewswire.com",
+                "dni": 56129099
+                }, {
+                "nombre": "Brigid",
+                "apellido": "Sprakes",
+                "correo": "bsprakes1t@nydailynews.com",
+                "dni": 33391338
+                }, {
+                "nombre": "Guthrie",
+                "apellido": "O'Regan",
+                "correo": "goregan1u@google.fr",
+                "dni": 30734923
+                }, {
+                "nombre": "Aida",
+                "apellido": "Berringer",
+                "correo": "aberringer1v@npr.org",
+                "dni": 47469194
+                }, {
+                "nombre": "Ruttger",
+                "apellido": "Marlen",
+                "correo": "rmarlen1w@purevolume.com",
+                "dni": 98088478
+                }, {
+                "nombre": "Vasili",
+                "apellido": "Kibbey",
+                "correo": "vkibbey1x@homestead.com",
+                "dni": 66578357
+                }, {
+                "nombre": "Doroteya",
+                "apellido": "Reye",
+                "correo": "dreye1y@oaic.gov.au",
+                "dni": 12043766
+                }, {
+                "nombre": "Nappy",
+                "apellido": "Gripton",
+                "correo": "ngripton1z@wikipedia.org",
+                "dni": 72883817
+                }, {
+                "nombre": "Wally",
+                "apellido": "Ayliffe",
+                "correo": "wayliffe20@mapquest.com",
+                "dni": 42728813
+                }, {
+                "nombre": "Doloritas",
+                "apellido": "Renachowski",
+                "correo": "drenachowski21@narod.ru",
+                "dni": 91605365
+                }, {
+                "nombre": "Lotte",
+                "apellido": "Mulqueen",
+                "correo": "lmulqueen22@comcast.net",
+                "dni": 69739609
+                }, {
+                "nombre": "Hildegaard",
+                "apellido": "Perigo",
+                "correo": "hperigo23@kickstarter.com",
+                "dni": 35394146
+                }, {
+                "nombre": "Sharl",
+                "apellido": "Ansell",
+                "correo": "sansell24@nbcnews.com",
+                "dni": 28674955
+                }, {
+                "nombre": "Sonny",
+                "apellido": "Lautie",
+                "correo": "slautie25@vinaora.com",
+                "dni": 19587775
+                }, {
+                "nombre": "Allianora",
+                "apellido": "Lowle",
+                "correo": "alowle26@sbwire.com",
+                "dni": 63139349
+                }, {
+                "nombre": "Lavinia",
+                "apellido": "McAviy",
+                "correo": "lmcaviy27@msn.com",
+                "dni": 91026316
+                }, {
+                "nombre": "Rafaelita",
+                "apellido": "Hunnawill",
+                "correo": "rhunnawill28@slideshare.net",
+                "dni": 79761177
+                }, {
+                "nombre": "Helaine",
+                "apellido": "Izzett",
+                "correo": "hizzett29@clickbank.net",
+                "dni": 73054305
+                }, {
+                "nombre": "Devin",
+                "apellido": "McSwan",
+                "correo": "dmcswan2a@a8.net",
+                "dni": 80021046
+                }, {
+                "nombre": "Meredithe",
+                "apellido": "Phelipeaux",
+                "correo": "mphelipeaux2b@parallels.com",
+                "dni": 86726939
+                }, {
+                "nombre": "Roderigo",
+                "apellido": "Rosindill",
+                "correo": "rrosindill2c@list-manage.com",
+                "dni": 79576201
+                }, {
+                "nombre": "Corinna",
+                "apellido": "Boissier",
+                "correo": "cboissier2d@cpanel.net",
+                "dni": 10639926
+                }, {
+                "nombre": "Issiah",
+                "apellido": "Gajownik",
+                "correo": "igajownik2e@netlog.com",
+                "dni": 37241818
+                }, {
+                "nombre": "Galen",
+                "apellido": "Clampton",
+                "correo": "gclampton2f@altervista.org",
+                "dni": 52764582
+                }, {
+                "nombre": "Glynn",
+                "apellido": "Kretschmer",
+                "correo": "gkretschmer2g@e-recht24.de",
+                "dni": 66774834
+                }, {
+                "nombre": "Fabio",
+                "apellido": "Matasov",
+                "correo": "fmatasov2h@geocities.com",
+                "dni": 82486323
+                }, {
+                "nombre": "Hale",
+                "apellido": "Titterington",
+                "correo": "htitterington2i@altervista.org",
+                "dni": 81631530
+                }, {
+                "nombre": "Bart",
+                "apellido": "McAughtrie",
+                "correo": "bmcaughtrie2j@bloomberg.com",
+                "dni": 21385207
+                }, {
+                "nombre": "Sybyl",
+                "apellido": "Renac",
+                "correo": "srenac2k@ibm.com",
+                "dni": 25958502
+                }, {
+                "nombre": "Alvira",
+                "apellido": "Plane",
+                "correo": "aplane2l@walmart.com",
+                "dni": 97917081
+                }, {
+                "nombre": "Cordi",
+                "apellido": "Absalom",
+                "correo": "cabsalom2m@yale.edu",
+                "dni": 91017624
+                }, {
+                "nombre": "Lurleen",
+                "apellido": "Boycott",
+                "correo": "lboycott2n@plala.or.jp",
+                "dni": 31653612
+                }, {
+                "nombre": "Clayton",
+                "apellido": "Dicte",
+                "correo": "cdicte2o@arizona.edu",
+                "dni": 45934556
+                }, {
+                "nombre": "Miltie",
+                "apellido": "Crowcher",
+                "correo": "mcrowcher2p@google.com.au",
+                "dni": 91760181
+                }, {
+                "nombre": "Portie",
+                "apellido": "Shearer",
+                "correo": "pshearer2q@flavors.me",
+                "dni": 71241865
+                }, {
+                "nombre": "Ber",
+                "apellido": "Leys",
+                "correo": "bleys2r@comsenz.com",
+                "dni": 73648939
+            },
+        ],
+        },
+        computed: {
+            personasFiltradas() {
+                
+                if(this.tipoBuscador === 'BC'){
+                    
+                    return this.personas.filter((persona) => {
+                        let registroCompleto = `${persona.nombre} ${persona.apellido} ${persona.dni} ${persona.correo}`
+                        return registroCompleto.toLowerCase().includes(this.criterioDeBusqueda.toLowerCase())
+                    });
+
+                }else if(this.tipoBuscador === 'BE'){
+                    
+                    var filtrados = this.personas;
+
+                    var nombre = this.bNombre !== '' ? this.bNombre : null;
+                    var apellido = this.bApellido !== '' ? this.bApellido : null;
+                    var dni = this.bDNI !== '' ? this.bDNI : null;
+                    var correo = this.bCorreo !== '' ? this.bCorreo : null;
+                    
+                    if(dni){
+                        filtrados = filtrados.filter( (persona) => {
+                            return persona.dni.toString().includes(dni);
+                        });
+                    }
+                    if(nombre){
+                        filtrados = filtrados.filter( (persona) => {
+                            return persona.nombre.toLowerCase().includes(nombre.toLowerCase());
+                        });
+                    }
+                    if(apellido){
+                        filtrados = filtrados.filter( (persona) => {
+                            return persona.apellido.toLowerCase().includes(apellido.toLowerCase());
+                        });
+                    }
+                    if(correo){
+                        filtrados = filtrados.filter( (persona) => {
+                            return persona.correo.toLowerCase().includes(correo.toLowerCase());
+                        });
+                    }
+
+                    return filtrados;
+                    
+
+                }
+            },
+        },
+        methods: {
+            getNombreCompleto(persona) {
+                return `${persona.nombre} ${persona.apellido}`;
+            },
+            mostrarAlert(){
+                return (
+                    ( this.bNombre.length < this.cMIN_NUMERO_DE_CARACTERES ) 
+                    && 
+                    (this.bApellido.length < this.cMIN_NUMERO_DE_CARACTERES) 
+                    && 
+                    ( this.bCorreo.length < this.cMIN_NUMERO_DE_CARACTERES) 
+                    && 
+                    ( this.bDNI.length < this.cMIN_NUMERO_DE_CARACTERES)
+                )
+            }
+        },
+    });
+</script>
